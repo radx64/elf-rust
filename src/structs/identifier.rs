@@ -11,6 +11,7 @@ pub struct Identifier{
     endianess: Endianness,
     verison: u8,
     abi: Abi,
+    abiversion: u8,
     padding: [u8; consts::IDENT_PADDING_BYTES]
 }
 
@@ -26,8 +27,9 @@ impl Identifier{
             class: Class::from_u8(payload[consts::EI_CLASS]).ok_or("Invalid class")?,
             endianess: Endianness::from_u8(payload[consts::EI_DATA]).ok_or("Invalid endianness")?,
             verison: payload[consts::EI_VERSION],
-            abi: Abi::from_u8(payload[7]).ok_or("Invalid architecture")?,
-            padding: [0; consts::IDENT_PADDING_BYTES]
+            abi: Abi::from_u8(payload[consts::EI_OSABI]).ok_or("Invalid target ABI")?,
+            abiversion: payload[consts::EI_ABIVERSION],
+            padding: [0; consts::IDENT_PADDING_BYTES],
         })
     }
 

@@ -19,7 +19,6 @@ impl Config {
 mod tests {
     use super::*;
 
-
     #[test]
     fn test_config_should_return_path_to_inspected_binary() {
         let params = [String::from("bin_name"), String::from("inspected_binary"), String::from("random_stuff")];
