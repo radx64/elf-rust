@@ -2,8 +2,9 @@ use std::env;
 use std::process;
 
 use elf_rust::analyze;
-use elf_rust::Config;
+use elf_rust::config::Config;
 
+#[allow(dead_code)]
 fn main() {
 
     let config = Config::build(env::args()).unwrap_or_else(|err| {
