@@ -5,3 +5,4 @@ pub mod entrypoint;
 pub mod identifier;
 pub mod machine;
 pub mod type_;
+pub mod offset;

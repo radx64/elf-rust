@@ -15,3 +15,6 @@ pub type Elf64Xword = Elf32Xword;
 
 pub type Elf32Addr = u32;
 pub type Elf64Addr = u64;
+
+pub type Elf32Off = u32;
+pub type Elf64Off = u64;

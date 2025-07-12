@@ -36,4 +36,8 @@ impl Identifier{
     pub fn is32_bit(&self) -> bool {
         self.class == Class::ELF32
     }
+
+    pub fn is_little_endian(&self) -> bool {
+        self.endianess == Endianness::LITTLE
+    }
 }
