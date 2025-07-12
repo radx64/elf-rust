@@ -14,3 +14,25 @@ impl Config {
         Ok(Config{binary_name})
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+
+    #[test]
+    fn test_config_should_return_path_to_inspected_binary() {
+        let params = [String::from("bin_name"), String::from("inspected_binary"), String::from("random_stuff")];
+
+        let result = Config::build(params.into_iter()).expect("Should yield proper result config");
+        assert_eq!(result.binary_name, "inspected_binary");
+    } 
+
+    #[test]
+    fn test_config_should_return_error_when_there_is_not_enough_args() {
+        let params = [String::from("bin_name")];
+
+        let result = Config::build(params.into_iter());
+        assert!(result.is_err());
+    }
+}
