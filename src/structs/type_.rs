@@ -40,13 +40,13 @@ impl fmt::Display for Type {
             _ => 0,
         };
         let description =  match self {
-            Type::EtNone   => "None",
-            Type::EtRel    => "Relocatable file",
-            Type::EtExec   => "Executable file",
-            Type::EtDyn    => "Shared object file",
-            Type::EtCore   => "Core file",
-            Type::EtOs(_)     => "OS Specific",
-            Type::EtProc(_)   => "Processor specifc",
+            Type::EtNone   => "NONE (None)",
+            Type::EtRel    => "REL (Relocatable file)",
+            Type::EtExec   => "EXEC (Executable file)",
+            Type::EtDyn    => "DYN (Shared object file)",
+            Type::EtCore   => "CORE (Core file)",
+            Type::EtOs(_)  => "OS (OS Specific)",
+            Type::EtProc(_)=> "PROC (Processor specifc)",
         };
 
         if matches!(self, Type::EtOs(_)) || matches!(self, Type::EtProc(_))
