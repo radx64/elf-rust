@@ -13,3 +13,14 @@ impl Class {
         }
     }
 }
+
+use std::fmt;
+
+impl fmt::Display for Class {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", match &self {
+            Class::ELF32 => "Elf32",
+            Class::ELF64 => "Elf64",
+        })
+    }
+}

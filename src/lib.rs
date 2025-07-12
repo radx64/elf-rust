@@ -29,17 +29,17 @@ struct ElfHeader{
     e_ident: Identifier,
     e_type: Type,
     e_machine: Machine,
-    e_verison: u32,
+    e_verison: types::Elf32Word,
     e_entry: EntryPoint,
     e_phoff: Offset,
     e_shoff: Offset,
-    e_flags: u32,
-    e_ehsize: u16,
-    e_phentsize: u16,
-    e_phnum: u16,
-    e_shentsize: u16,
-    e_shnum: u16,
-    e_shstrndx: u16,
+    e_flags: types::Elf32Word,
+    e_ehsize: types::Elf32Half,
+    e_phentsize: types::Elf32Half,
+    e_phnum: types::Elf32Half,
+    e_shentsize: types::Elf32Half,
+    e_shnum: types::Elf32Half,
+    e_shstrndx: types::Elf32Half,
 }
 
 impl ElfHeader {
@@ -107,6 +107,7 @@ impl ElfHeader {
     }
 }
  
+use std::fmt::UpperHex;
 use std::fs;
 use config::Config;
 
@@ -120,10 +121,50 @@ pub fn analyze(config: &Config) -> Result<(), String> {
         Ok(value) => value,
         Err(error) => return Err(format!("Failed parsing elf header due to: {}", error)),
     }; 
-    println!("{:#?}", header);
+
+    print(&header);
 
     Ok(())
 }
+
+fn print_hex<T, const N: usize>(bytes: &[T; N]) -> String
+where
+    T : UpperHex
+{
+    let mut result = String::new();
+    for byte in bytes {
+        result += &format!("{:02X} ", byte);
+    }
+    result
+}
+
+
+fn print(header: &ElfHeader) {
+    println!("Elf Header:");
+    println!("\tIdentification:");
+    println!("\t\tMagic:\t\t{}", print_hex(&header.e_ident.magic));
+    println!("\t\tClass:\t\t{}", header.e_ident.class);
+    println!("\t\tEndianness:\t{}", header.e_ident.endianess);
+    println!("\t\tVersion:\t{:?}", header.e_ident.verison);
+    println!("\t\tAbi:\t\t{}", header.e_ident.abi);
+    println!("\t\tAbiVersion:\t{:?}", header.e_ident.abiversion);
+    println!("\t\tPadding:\t{}", print_hex(&header.e_ident.padding));
+    println!("\tType:\t\t\t{}", &header.e_type);
+    println!("\tMachine:\t\t{}", &header.e_machine);
+    println!("\tVersion:\t\t{}", &header.e_verison);
+    println!("\tEntry point:\t\t{}", &header.e_entry);
+    println!("\tProgram header:\t\t{} (offset)", &header.e_phoff);
+    println!("\tSection header:\t\t{} (offset)", &header.e_shoff);
+    println!("\tFlags:\t\t\t{:04X}", &header.e_flags);
+    println!("\tElf header size:\t{} (bytes)", &header.e_ehsize);
+    println!("\tProgram header size:\t{} (bytes)", &header.e_phentsize);
+    println!("\tProgram header entries:\t{}", &header.e_phnum);
+    println!("\tSection header size:\t{} (bytes)", &header.e_shentsize);
+    println!("\tSection header entries:\t{}", &header.e_shnum);
+    println!("\tSection names index:\t{}", &header.e_shstrndx);
+}
+
+
 #[cfg(test)]
 mod tests {
     use super::*;

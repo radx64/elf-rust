@@ -17,7 +17,10 @@ pub enum Abi {
     AROS,
     FenixOS,
     NuxiCloudAbi,
-    StratusTechnologiesOpenVos
+    StratusTechnologiesOpenVos,
+    ArmEABI,
+    Arm,
+    Standalone
 }
 
 impl Abi {
@@ -41,7 +44,40 @@ impl Abi {
             0x10 => Some(Abi::FenixOS),
             0x11 => Some(Abi::NuxiCloudAbi),
             0x12 => Some(Abi::StratusTechnologiesOpenVos),
+            0x40 => Some(Abi::ArmEABI),
+            0x61 => Some(Abi::Arm),
+            0xFF => Some(Abi::Standalone),
             _ => None,
         }
+    }
+}
+
+use std::fmt;
+
+impl fmt::Display for Abi {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", match &self {
+            Abi::SystemV => "Unix - System V",
+            Abi::HpUx => "HP/UX",
+            Abi::NetBSD => "NetBSD",
+            Abi::Linux => "Linux",
+            Abi::GnuHurd => "GNU Hurd",
+            Abi::Solaris => "Solaris",
+            Abi::AixMonterey => "AIX Monterey",
+            Abi::IRIX => "SGI Irix",
+            Abi::FreeBSD => "FreeBsd",
+            Abi::Tru64 => "TRU64",
+            Abi::NovelModesto => "Novel Modesto",
+            Abi::OpenBSD => "OpenBSD",
+            Abi::OpenVMS => "Open VMS",
+            Abi::NonStopKernel => "Non Stop Kernel",
+            Abi::AROS => "AROS",
+            Abi::FenixOS => "Fenix OS",
+            Abi::NuxiCloudAbi => "Nuxi Cloud Abi",
+            Abi::StratusTechnologiesOpenVos => "Stratus Technologies Open Vos",
+            Abi::ArmEABI => "Arm Embeeded ABI",
+            Abi::Arm => "Arm",
+            Abi::Standalone => "Standalone (embeeded) application",
+        })
     }
 }

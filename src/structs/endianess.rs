@@ -13,3 +13,14 @@ impl Endianness {
         }
     }
 }
+
+use std::fmt;
+
+impl fmt::Display for Endianness {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", match &self {
+            Endianness::LITTLE => "Little Endian",
+            Endianness::BIG => "Big Endian",
+        })
+    }
+}

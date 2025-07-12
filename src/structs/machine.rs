@@ -178,3 +178,12 @@ impl Machine{
         }
     }
 }
+
+
+use std::fmt;
+
+impl fmt::Display for Machine {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:?} <- nice printing to be implemented, using debug for now", self)
+    }
+}

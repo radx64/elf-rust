@@ -23,3 +23,14 @@ impl EntryPoint{
 
     }
 }
+
+use std::fmt;
+
+impl fmt::Display for EntryPoint{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+           EntryPoint::Bits32(value) => write!(f, "0x{:04x}", value),
+           EntryPoint::Bits64(value) => write!(f, "0x{:08x}", value),
+        }
+    }
+}

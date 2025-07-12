@@ -18,3 +18,14 @@ impl Offset {
     }
 
 }
+
+use std::fmt;
+
+impl fmt::Display for Offset{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+           Offset::Bits32(value) => write!(f, "0x{:04x}", value),
+           Offset::Bits64(value) => write!(f, "0x{:08x}", value),
+        }
+    }
+}
