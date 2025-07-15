@@ -6,3 +6,6 @@ pub mod identifier;
 pub mod machine;
 pub mod type_;
 pub mod offset;
+pub mod elfheader;
+pub mod programheader;
+pub mod segmenttype;

@@ -12,6 +12,13 @@ impl Class {
             _ => None,
         }
     }
+
+    pub fn to_u8(&self) -> u8 {
+        match self {
+            Class::ELF32 => 1,
+            Class::ELF64 => 2,
+        }
+    }
 }
 
 use std::fmt;

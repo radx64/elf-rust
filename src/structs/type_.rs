@@ -9,11 +9,11 @@ pub enum Type {
     EtProc(u16),
 }
 
-const ET_LOOS : u16 = 0xFE00;
-const ET_HIOS : u16 = 0xFEFF;
+const ET_LOOS: u16 = 0xFE00;
+const ET_HIOS: u16 = 0xFEFF;
 
-const ET_LOPROC : u16 = 0xFF00;
-const ET_HIPROC : u16 = 0xFFFF;
+const ET_LOPROC: u16 = 0xFF00;
+const ET_HIPROC: u16 = 0xFFFF;
 
 impl Type{
     pub fn from_u16(value: u16) -> Option<Type> {
