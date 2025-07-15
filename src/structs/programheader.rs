@@ -46,6 +46,6 @@ impl ProgramHeader {
 
     pub fn print(&self) {
         println!("Program Header:");
-        println!("\tSegment type: \t\t{:#?}", &self.entries);
+        println!("\tEntries: \t\t{:#?}", &self.entries);
     }
 }
