@@ -1,5 +1,3 @@
-use super::super::bits::*;
-
 #[derive(Debug)]
 pub enum SegmentType {
     PtNull,
