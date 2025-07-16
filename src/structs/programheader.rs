@@ -118,7 +118,7 @@ impl ProgramHeader {
 
     pub fn print(&self) {
         println!("Program header segments:");
-        println!("Idx\tOffset\t\tVirtAddr\tPhysAddr\tFilzeSiz\tMemSiz\t\tFlg\tAlign\t\tType");
+        println!("Idx\tOffset\t\tVirtAddr\tPhysAddr\tFileSiz\t\tMemSiz\t\tFlags\tAlignment\tType");
         for (index, entry) in self.entries.iter().enumerate() {
             print!("{index:3}\t");
             entry.print();
