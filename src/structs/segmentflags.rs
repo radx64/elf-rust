@@ -1,5 +1,3 @@
-
-
 pub const PF_X: usize = 0x1;
 pub const PF_W: usize = 0x2;
 pub const PF_R: usize = 0x4;

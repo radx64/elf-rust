@@ -1,6 +1,6 @@
 
-use super::super::types;
-use super::super::bits::*;
+use crate::types;
+use crate::bits::*;
 
 #[derive(Debug, Clone, Copy)]
 pub enum Word {
@@ -28,7 +28,7 @@ impl Word {
             }
         }
     }
-    
+
     #[allow(dead_code)]
     pub fn to_u32(&self) -> Result<u32, &'static str> {
         match self {

@@ -53,7 +53,8 @@ pub fn analyze(config: &Config) -> Result<(), String> {
     let section_header_info = SectionHeaderInfo {
         offset: elf_header.section_header_offset(),
         entries: elf_header.section_header_entries(),
-        size: elf_header.section_header_size()};
+        size: elf_header.section_header_size(),
+        names_index: elf_header.section_names_index()};
 
     let section_header = match SectionHeader::build(&payload, &section_header_info, is_32bit, is_little_endian) {
         Ok(value) => value,

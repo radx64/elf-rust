@@ -3,9 +3,9 @@ use super::machine::Machine;
 use super::type_::Type;
 use super::word::Word;
 
-use super::super::types;
-use super::super::consts;
-use super::super::bits::*;
+use crate::types;
+use crate::consts;
+use crate::bits::*;
 
 #[derive(Debug)]
 pub struct ElfHeader{
@@ -145,6 +145,10 @@ impl ElfHeader {
 
     pub fn section_header_size(&self) -> types::Elf32Half {
         self.e_shentsize
+    }
+
+    pub fn section_names_index(&self) -> types::Elf32Half {
+        self.e_shstrndx
     }
 
 

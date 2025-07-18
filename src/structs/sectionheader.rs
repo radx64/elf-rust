@@ -1,6 +1,6 @@
 use crate::structs::word::Word;
-use super::super::types;
-use super::super::consts;
+use crate::types;
+use crate::consts;
 use crate::structs::sectionheadertype::SectionHeaderType;
 use crate::bits::*;
 use crate::structs::sectionheaderflags;
@@ -8,6 +8,7 @@ use crate::structs::sectionheaderflags;
 #[derive(Debug)]
 pub struct SectionHeaderEntry {
     sh_name: types::Elf32Word,
+    sh_name_str: String,
     sh_type: SectionHeaderType,
     sh_flags: Word,
     sh_addr: Word,
@@ -22,6 +23,7 @@ pub struct SectionHeaderEntry {
 // TODO add section header name fetching from strings section
 impl SectionHeaderEntry {
     pub fn print(&self){
+        println!("name: {} ", self.sh_name_str);
         println!("name offset: 0x{:X}", self.sh_name);
         println!("type: {}", self.sh_type);
         println!("flags:\n{}", sectionheaderflags::flags_to_string(self.sh_flags.to_u64().unwrap()));
@@ -39,11 +41,12 @@ pub struct SectionHeaderInfo{
     pub offset: Word,
     pub entries: types::Elf32Half,
     pub size: types::Elf32Half,
+    pub names_index: types::Elf32Half,
 }
 
 #[derive(Debug)]
 pub struct SectionHeader{
-    entries: Vec<SectionHeaderEntry>
+    entries: Vec<SectionHeaderEntry>,
 }
 
 impl SectionHeader {
@@ -54,6 +57,8 @@ impl SectionHeader {
 
         let mut entries: Vec<SectionHeaderEntry> = Vec::new();
         let first_entry_offset: u64 = info.offset.to_u64()?;
+
+        let mut string_section_offset = 0;
 
         for i in 0..info.entries {
             let entry_offset = (first_entry_offset + info.size as u64 * i as u64) as usize;
@@ -107,8 +112,17 @@ impl SectionHeader {
             let sh_link = types::Elf32Word::from_ne_bytes(payload[sh_link_offset..sh_link_offset+4].try_into().unwrap());
             let sh_info = types::Elf32Word::from_ne_bytes(payload[sh_info_offset..sh_info_offset+4].try_into().unwrap());
 
+            let sh_name_str = String::from("UNKNOWN_NAME");
+
+            if let SectionHeaderType::ShtStrtab = sh_type {
+                if i == info.names_index {
+                    string_section_offset = sh_offset.to_u64().unwrap() as usize;
+                }
+            }
+
             entries.push(SectionHeaderEntry{
                 sh_name: sh_name,
+                sh_name_str: sh_name_str,
                 sh_type: sh_type, 
                 sh_flags: sh_flags,
                 sh_addr: sh_addr,
@@ -120,17 +134,33 @@ impl SectionHeader {
                 sh_entsize: sh_entsize});
         }
 
+        for entry in entries.iter_mut(){
+
+            let offset = string_section_offset + entry.sh_name as usize;
+            entry.sh_name_str = string_until_null(payload[offset..].to_vec());
+        }
+
          Ok(SectionHeader{entries: entries})
     }
 
     pub fn print(&self){
         println!("Section header segments:");
-
+ 
         for (index, entry) in self.entries.iter().enumerate() {
             println!("");
-            println!("Index: {index}");
+            println!("Index: {index} ");
             entry.print();
         }
  
     }
+}
+
+// TODO write tests for this method
+fn string_until_null(vec: Vec<u8>) -> String {
+    let slice = match vec.iter().position(|&b| b == 0) {
+        Some(pos) => &vec[..pos],
+        None => &vec[..],
+    };
+
+    String::from_utf8_lossy(slice).into_owned()
 }
