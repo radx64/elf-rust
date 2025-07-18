@@ -28,7 +28,8 @@ impl Word {
             }
         }
     }
-
+    
+    #[allow(dead_code)]
     pub fn to_u32(&self) -> Result<u32, &'static str> {
         match self {
             Word::Bits32(value) => Ok(value.clone()),

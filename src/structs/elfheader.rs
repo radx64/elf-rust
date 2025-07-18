@@ -135,6 +135,19 @@ impl ElfHeader {
         self.e_ident.is_little_endian()
     }
 
+    pub fn section_header_offset(&self) -> Word {
+        self.e_shoff
+    }
+
+    pub fn section_header_entries(&self) -> types::Elf32Half {
+        self.e_shnum
+    }
+
+    pub fn section_header_size(&self) -> types::Elf32Half {
+        self.e_shentsize
+    }
+
+
 }
  
 use std::fmt::UpperHex;

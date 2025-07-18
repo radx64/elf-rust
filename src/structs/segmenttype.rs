@@ -1,3 +1,5 @@
+use crate::bits::to_u32_from_slice;
+
 #[derive(Debug)]
 pub enum SegmentType {
     PtNull,
@@ -19,7 +21,7 @@ const PT_HIPROC: u32 = 0x7FFFFFFF;
 
 impl SegmentType {
     pub fn from_u32(value: &[u8;4], is_little_endian: bool) -> Option<SegmentType> {
-        let value = to_u32_from_slice(value, is_little_endian);    // Todo: check if segment type desctipion use endianness (rather not)
+        let value = to_u32_from_slice(value, is_little_endian);    // Todo: check if segment type description use endianness (rather not)
 
         match value {
             0x00000000 => Some(SegmentType::PtNull),
@@ -38,8 +40,6 @@ impl SegmentType {
 }
 
 use std::fmt;
-
-use crate::bits::to_u32_from_slice;
 
 impl fmt::Display for SegmentType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -63,7 +63,7 @@ impl fmt::Display for SegmentType {
 
         if matches!(self, SegmentType::PtOs(_)) || matches!(self, SegmentType::PtProc(_))
         {
-            write!(f, "{} ({})", description, num)
+            write!(f, "{} (0x{:X})", description, num)
         }
         else {
             write!(f, "{}", description)

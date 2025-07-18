@@ -2,7 +2,7 @@ use crate::bits::*;
 use crate::structs::word::Word;
 
 use super::segmenttype::SegmentType;
-use super::flags;
+use super::segmentflags;
 use super::super::consts;
 use super::super::types;
 
@@ -26,7 +26,7 @@ impl ProgramHeaderEntry {
             self.p_paddr,
             self.p_filesz,
             self.p_memsz,
-            flags::flags_to_string(self.p_flags),
+            segmentflags::flags_to_string(self.p_flags),
             self.p_align,
             self.p_type);
     }
@@ -55,8 +55,7 @@ impl ProgramHeader {
         const FIELD_SIZE : usize = 4;
 
         for i in 0..info.entries {
-            let entry_offset = first_entry_offset + info.size as u64 * i as u64;
-            let entry_offset = entry_offset as usize;
+            let entry_offset = (first_entry_offset + info.size as u64 * i as u64) as usize;
 
             let p_type = SegmentType::from_u32(&payload[entry_offset..entry_offset+FIELD_SIZE].try_into().unwrap(), is_little_endian).expect("Tried to get segment type");
             let p_flags;

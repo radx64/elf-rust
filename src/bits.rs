@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 pub fn to_u16(h: u8, l: u8) -> u16{
     ((h as u16) << 8) | (l as u16)
 }

@@ -8,4 +8,7 @@ pub mod word;
 pub mod elfheader;
 pub mod programheader;
 pub mod segmenttype;
-pub mod flags;
+pub mod segmentflags;
+pub mod sectionheader;
+pub mod sectionheadertype;
+pub mod sectionheaderflags;

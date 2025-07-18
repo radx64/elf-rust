@@ -21,7 +21,7 @@ use structs::elfheader::ElfHeader;
 use std::fs;
 use config::Config;
 
-use crate::structs::programheader::{ProgramHeader, ProgramHeaderInfo};
+use crate::structs::{programheader::{ProgramHeader, ProgramHeaderInfo}, sectionheader::{SectionHeader, SectionHeaderInfo}};
 
 pub fn analyze(config: &Config) -> Result<(), String> {
     let payload = match fs::read(&config.binary_name) {
@@ -38,7 +38,7 @@ pub fn analyze(config: &Config) -> Result<(), String> {
     let is_32bit = elf_header.is32_bit();
     let is_little_endian = elf_header.is_little_endian();
 
-    let program_header_info: ProgramHeaderInfo = ProgramHeaderInfo {
+    let program_header_info= ProgramHeaderInfo {
         offset: elf_header.program_header_offset(),
         entries: elf_header.program_header_entries(),
         size: elf_header.program_header_size()};
@@ -49,6 +49,18 @@ pub fn analyze(config: &Config) -> Result<(), String> {
     };
 
     program_header.print();
+
+    let section_header_info = SectionHeaderInfo {
+        offset: elf_header.section_header_offset(),
+        entries: elf_header.section_header_entries(),
+        size: elf_header.section_header_size()};
+
+    let section_header = match SectionHeader::build(&payload, &section_header_info, is_32bit, is_little_endian) {
+        Ok(value) => value,
+        Err(error) => return Err(format!("Failed parsing section header due to: {}", error)),
+    };
+
+    section_header.print();
 
     Ok(())
 }
