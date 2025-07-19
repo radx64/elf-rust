@@ -1,8 +1,7 @@
 use std::fs;
 
-
 pub mod config;
-
+pub mod termcolors; 
 mod bits;
 mod consts;
 mod types;
@@ -24,6 +23,7 @@ pub fn analyze(config: &Config) -> Result<(), String> {
         Err(error) => return Err(format!("Failed parsing elf header due to \"{}\"", error)),
     }; 
     elf_header.print();
+    println!("");
 
     let is_32bit = elf_header.is32_bit();
     let is_little_endian = elf_header.is_little_endian();
@@ -39,7 +39,8 @@ pub fn analyze(config: &Config) -> Result<(), String> {
     };
 
     program_header.print();
-
+    println!("");
+    
     let section_header_info = SectionHeaderInfo {
         offset: elf_header.section_header_offset(),
         entries: elf_header.section_header_entries(),

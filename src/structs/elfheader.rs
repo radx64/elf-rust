@@ -3,6 +3,7 @@ use super::machine::Machine;
 use super::type_::Type;
 use super::word::Word;
 
+use crate::termcolors::*;
 use crate::types;
 use crate::consts;
 use crate::bits::*;
@@ -77,7 +78,7 @@ impl ElfHeader {
             e_type: Type::from_u16(to_u16(payload[0x11], payload[0x10])).ok_or("Invalid type")?,
             e_machine: Machine::from_u16(to_u16(payload[0x13], payload[0x12])).ok_or("Invalid machine type")?,
             e_verison: to_u32(payload[0x17], payload[0x15], payload[0x15], payload[0x14]),
-            e_entry: Word::build(&payload[0x22..0x26].try_into().unwrap(), &payload[0x18..0x1C].try_into().unwrap(), is32_bit, is_little_endian), // Todo: think what to do with unwraps
+            e_entry: Word::build(&payload[0x22..0x26].try_into().unwrap(), &payload[0x18..0x1C].try_into().unwrap(), is32_bit, is_little_endian),
             e_phoff: program_header_offset,
             e_shoff: section_header_table_offset,
             e_flags: flags,
@@ -91,28 +92,28 @@ impl ElfHeader {
     }
 
     pub fn print(&self) {
-        println!("Elf Header:");
+        println!("{}Elf Header:{}", purple(), default());
         println!("\tIdentification:");
-        println!("\t\tMagic:\t\t{}", print_hex_arr(&self.e_ident.magic));
-        println!("\t\tClass:\t\t{}", self.e_ident.class);
-        println!("\t\tEndianness:\t{}", self.e_ident.endianess);
-        println!("\t\tVersion:\t{:?}", self.e_ident.verison);
-        println!("\t\tAbi:\t\t{}", self.e_ident.abi);
-        println!("\t\tAbiVersion:\t{:?}", self.e_ident.abiversion);
-        println!("\t\tPadding:\t{}", print_hex_arr(&self.e_ident.padding));
-        println!("\tType:\t\t\t\t{}", &self.e_type);
-        println!("\tMachine:\t\t\t{}", &self.e_machine);
-        println!("\tVersion:\t\t\t{}", &self.e_verison);
-        println!("\tEntry point:\t\t\t{:x}", &self.e_entry);
-        println!("\tProgram header:\t\t\t{:x} (offset)", &self.e_phoff);
-        println!("\tSection header:\t\t\t{:x} (offset)", &self.e_shoff);
-        println!("\tFlags:\t\t\t\t{:04X}", &self.e_flags);
-        println!("\tElf header size:\t\t{} (bytes)", &self.e_ehsize);
-        println!("\tProgram header entry size:\t{} (bytes)", &self.e_phentsize);
-        println!("\tProgram header entries:\t\t{}", &self.e_phnum);
-        println!("\tSection header size:\t\t{} (bytes)", &self.e_shentsize);
-        println!("\tSection header entries:\t\t{}", &self.e_shnum);
-        println!("\tSection names index:\t\t{}", &self.e_shstrndx);
+        println!("\t\tMagic:\t\t{}{}{}", green(), print_hex_arr(&self.e_ident.magic), default());
+        println!("\t\tClass:\t\t{}{}{}", green(), self.e_ident.class, default());
+        println!("\t\tEndianness:\t{}{}{}", green(), self.e_ident.endianess, default());
+        println!("\t\tVersion:\t{}{:?}{}", green(), self.e_ident.verison, default());
+        println!("\t\tAbi:\t\t{}{}{}", green(), self.e_ident.abi, default());
+        println!("\t\tAbiVersion:\t{}{:?}{}", green(), self.e_ident.abiversion, default());
+        println!("\t\tPadding:\t{}{}{}", gray(), print_hex_arr(&self.e_ident.padding), default());
+        println!("\tType:\t\t\t\t{}{}{}", green(), &self.e_type, default());
+        println!("\tMachine:\t\t\t{}{}{}", green(), &self.e_machine, default());
+        println!("\tVersion:\t\t\t{}{}{}", green(), &self.e_verison, default());
+        println!("\tEntry point:\t\t\t{}{:x}{}", green(), &self.e_entry, default());
+        println!("\tProgram header:\t\t\t{}{:x}{} (offset)", green(), &self.e_phoff, default());
+        println!("\tSection header:\t\t\t{}{:x}{} (offset)", green(), &self.e_shoff, default());
+        println!("\tFlags:\t\t\t\t{}{:04X}{}", gray(), &self.e_flags, default());
+        println!("\tElf header size:\t\t{}{}{} (bytes)", green(), &self.e_ehsize, default());
+        println!("\tProgram header entry size:\t{}{}{} (bytes)", green(), &self.e_phentsize, default());
+        println!("\tProgram header entries:\t\t{}{}{}", green(), &self.e_phnum, default());
+        println!("\tSection header size:\t\t{}{}{} (bytes)", green(), &self.e_shentsize, default());
+        println!("\tSection header entries:\t\t{}{}{}", green(), &self.e_shnum, default());
+        println!("\tSection names index:\t\t{}{}{}", green(), &self.e_shstrndx, default());
     }
 
     pub fn is32_bit(&self) -> bool {

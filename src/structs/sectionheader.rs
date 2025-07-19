@@ -1,4 +1,5 @@
 use crate::structs::word::Word;
+use crate::termcolors::*;
 use crate::types;
 use crate::structs::sectionheadertype::SectionHeaderType;
 use crate::bits::*;
@@ -152,7 +153,7 @@ impl SectionHeader {
     }
 
     pub fn print(&self){
-        println!("Section header segments:");
+        println!("{}Section header segments:{}", purple(), default());
  
         println!("[Idx]\tLoadAddr\tImgOffset\tLink\t\tEntrySize\tName");
         println!("\tAlignment\t\t\tInfo\t\tSize\t\tType");

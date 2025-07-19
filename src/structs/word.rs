@@ -22,8 +22,8 @@ impl Word {
             true => Word::build32(l, is_little_endian),
             false => {
                 let mut combined= [0;8];
-                combined[0..4].copy_from_slice(h);
-                combined[4..8].copy_from_slice(l);
+                combined[0..4].copy_from_slice(l);
+                combined[4..8].copy_from_slice(h);
                 Word::build64(&combined, is_little_endian)
             }
         }
