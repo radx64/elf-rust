@@ -28,7 +28,7 @@ pub struct ElfHeader{
 impl ElfHeader {
     pub fn build(payload: &[u8]) -> Result<ElfHeader, &'static str> {
         if payload.len() < consts::SHSTRNDX64_END { // TODO: add proper validation later
-            return Err("Failed to parse. Header too short");
+            return Err("Elf header too short");
         }
 
         let identifier = match Identifier::build(&payload) {

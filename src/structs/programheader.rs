@@ -1,10 +1,9 @@
 use crate::bits::*;
 use crate::structs::word::Word;
+use crate::types;
 
-use super::segmenttype::SegmentType;
 use super::segmentflags;
-use super::super::consts;
-use super::super::types;
+use super::segmenttype::SegmentType;
 
 #[derive(Debug)]
 pub struct ProgramHeaderEntry {
@@ -45,8 +44,8 @@ pub struct ProgramHeader{
 
 impl ProgramHeader {
     pub fn build(payload: &[u8], info: &ProgramHeaderInfo, is_32bit: bool, is_little_endian: bool) -> Result<ProgramHeader, &'static str> {
-        if payload.len() < consts::SHSTRNDX64_END { // TODO: add proper validation later
-            return Err("Failed to parse. Header too short");
+        if payload.len() < info.offset.to_u64().unwrap() as usize + info.size as usize { 
+            return Err("Program header too short");
         }
 
         let mut entries: Vec<ProgramHeaderEntry> = Vec::new();

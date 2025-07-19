@@ -1,6 +1,5 @@
 use crate::structs::word::Word;
 use crate::types;
-use crate::consts;
 use crate::structs::sectionheadertype::SectionHeaderType;
 use crate::bits::*;
 use crate::structs::sectionheaderflags;
@@ -20,20 +19,29 @@ pub struct SectionHeaderEntry {
     sh_entsize: Word,
 }
 
-// TODO add section header name fetching from strings section
 impl SectionHeaderEntry {
     pub fn print(&self){
-        println!("name: {} ", self.sh_name_str);
-        println!("name offset: 0x{:X}", self.sh_name);
-        println!("type: {}", self.sh_type);
-        println!("flags:\n{}", sectionheaderflags::flags_to_string(self.sh_flags.to_u64().unwrap()));
-        println!("load address: 0x{:X}", self.sh_addr.to_u64().unwrap());
-        println!("offset in the image: {} (bytes)", self.sh_offset.to_u64().unwrap());
-        println!("size: {} (bytes)", self.sh_size.to_u64().unwrap());
-        println!("link: 0x{:X}", self.sh_link);
-        println!("info: 0x{:X}", self.sh_info);
-        println!("addres alignment: 0x{:X}", self.sh_addralign.to_u64().unwrap());
-        println!("entry size: {} (bytes)", self.sh_entsize.to_u64().unwrap());
+        println!("\t0x{:08X}\t0x{:08X}\t0x{:08X}\t0x{:08X}\t{:16}",
+            self.sh_addr.to_u64().unwrap(),
+            self.sh_offset.to_u64().unwrap(),
+            self.sh_link,
+
+            self.sh_entsize.to_u64().unwrap(),
+            self.sh_name_str,
+        );
+        println!("\t0x{:08X}\t\t\t0x{:08X}\t0x{:08X}\t{}",
+            self.sh_addralign.to_u64().unwrap(), 
+            self.sh_info,
+            self.sh_size.to_u64().unwrap(),
+            self.sh_type);
+
+        let flags = self.sh_flags.to_u64().unwrap();
+
+        if flags != 0 {
+            println!("{}", sectionheaderflags::flags_to_string(self.sh_flags.to_u64().unwrap()));
+        } else {
+            println!("\t[No flags]");
+        }
     }
 }
 
@@ -51,8 +59,8 @@ pub struct SectionHeader{
 
 impl SectionHeader {
     pub fn build(payload: &[u8], info: &SectionHeaderInfo, is_32bit: bool, is_little_endian: bool) -> Result<SectionHeader, &'static str> {
-        if payload.len() < consts::SHSTRNDX64_END { // TODO: add proper validation later
-            return Err("Failed to parse. Header too short");
+        if payload.len() < info.offset.to_u64().unwrap() as usize + info.size as usize { 
+            return Err("Section header too short");
         }
 
         let mut entries: Vec<SectionHeaderEntry> = Vec::new();
@@ -103,9 +111,9 @@ impl SectionHeader {
                 sh_size = Word::Bits64(to_u64_from_slice(&payload[sh_size_offset..sh_size_offset+8].try_into().unwrap(), is_little_endian));
                 sh_link_offset = entry_offset + 0x28;
                 sh_info_offset = entry_offset + 0x2C;
-                let sh_addralign_offset = entry_offset + 0x20;
+                let sh_addralign_offset = entry_offset + 0x30;
                 sh_addralign = Word::Bits64(to_u64_from_slice(&payload[sh_addralign_offset..sh_addralign_offset+8].try_into().unwrap(), is_little_endian));
-                let sh_entsize_offset = entry_offset + 0x24;
+                let sh_entsize_offset = entry_offset + 0x38;
                 sh_entsize = Word::Bits64(to_u64_from_slice(&payload[sh_entsize_offset..sh_entsize_offset+8].try_into().unwrap(), is_little_endian));
             }
 
@@ -146,16 +154,18 @@ impl SectionHeader {
     pub fn print(&self){
         println!("Section header segments:");
  
+        println!("[Idx]\tLoadAddr\tImgOffset\tLink\t\tEntrySize\tName");
+        println!("\tAlignment\t\t\tInfo\t\tSize\t\tType");
+        println!("\tFlags");
         for (index, entry) in self.entries.iter().enumerate() {
-            println!("");
-            println!("Index: {index} ");
+            print!("[{index:3}]");
             entry.print();
+            println!("");
         }
  
     }
 }
 
-// TODO write tests for this method
 fn string_until_null(vec: Vec<u8>) -> String {
     let slice = match vec.iter().position(|&b| b == 0) {
         Some(pos) => &vec[..pos],
@@ -163,4 +173,37 @@ fn string_until_null(vec: Vec<u8>) -> String {
     };
 
     String::from_utf8_lossy(slice).into_owned()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn string_unitl_null_should_read_to_first_null() {
+        let payload: Vec<u8> = vec![0x52, 0x41, 0x44, 0x00];
+        let result = string_until_null(payload);
+        assert_eq!(result, String::from("RAD"));
+    }
+
+    #[test]
+    fn string_unitl_null_should_hadle_empty_payload() {
+        let payload: Vec<u8> = vec![];
+        let result = string_until_null(payload);
+        assert_eq!(result, String::from(""));
+    }
+
+    #[test]
+    fn string_unitl_null_should_hadle_only_first_null() {
+        let payload: Vec<u8> = vec![0x72, 0x61, 0x64, 0x00, 0x52, 0x41, 0x44, 0x00];
+        let result = string_until_null(payload);
+        assert_eq!(result, String::from("rad"));
+    }
+
+    #[test]
+    fn string_unitl_null_should_hadle_only_nulls() {
+        let payload: Vec<u8> = vec![0x00, 0x00, 0x00];
+        let result = string_until_null(payload);
+        assert_eq!(result, String::from(""));
+    }
 }

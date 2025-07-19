@@ -96,7 +96,7 @@ impl fmt::Display for SectionHeaderType {
             write!(f, "{} (0x{:X})", description, num)
         }
         else {
-            write!(f, "{}", description)
+            write!(f, "{:width$}", description, width=f.width().unwrap_or(10))
         }
 
     }

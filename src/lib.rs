@@ -1,3 +1,6 @@
+use std::fs;
+
+
 pub mod config;
 
 mod bits;
@@ -6,19 +9,6 @@ mod types;
 mod structs;
 
 use structs::elfheader::ElfHeader;
-
-// fn read_n <const N: usize, I>(iter: &mut I) -> Option<[u8; N]>
-// where 
-//     I: Iterator<Item = u8>,
-// {
-//     let mut result: [u8; N] = [0; N];
-//     for i in 0..N {
-//         result[i] = iter.next()?;
-//     }
-//     Some(result)
-// }
-
-use std::fs;
 use config::Config;
 
 use crate::structs::{programheader::{ProgramHeader, ProgramHeaderInfo}, sectionheader::{SectionHeader, SectionHeaderInfo}};
@@ -31,7 +21,7 @@ pub fn analyze(config: &Config) -> Result<(), String> {
 
     let elf_header = match ElfHeader::build(&payload) {
         Ok(value) => value,
-        Err(error) => return Err(format!("Failed parsing elf header due to: {}", error)),
+        Err(error) => return Err(format!("Failed parsing elf header due to \"{}\"", error)),
     }; 
     elf_header.print();
 
@@ -45,7 +35,7 @@ pub fn analyze(config: &Config) -> Result<(), String> {
         
     let program_header = match ProgramHeader::build(&payload, &program_header_info, is_32bit, is_little_endian) {
         Ok(value) => value,
-        Err(error) => return Err(format!("Failed parsing program header due to: {}", error)),
+        Err(error) => return Err(format!("Failed parsing program header due to \"{}\"", error)),
     };
 
     program_header.print();
@@ -58,7 +48,7 @@ pub fn analyze(config: &Config) -> Result<(), String> {
 
     let section_header = match SectionHeader::build(&payload, &section_header_info, is_32bit, is_little_endian) {
         Ok(value) => value,
-        Err(error) => return Err(format!("Failed parsing section header due to: {}", error)),
+        Err(error) => return Err(format!("Failed parsing section header due to \"{}\"", error)),
     };
 
     section_header.print();

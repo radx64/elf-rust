@@ -13,12 +13,10 @@ fn main() {
     });
 
     println!("Analyzing: {} ...", config.binary_name);
-
     let result = analyze(&config).unwrap_or_else(|err| {
         eprintln!("Problem analyzing payload: {err}");
         process::exit(1);
     });
-    println!();
     println!("Analysis finished");
     result
 }
