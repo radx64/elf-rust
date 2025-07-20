@@ -13,7 +13,6 @@ pub const EI_NIDENT: usize = 16;
 // Padding size is a result of whole identifier minus padding offset
 pub const IDENT_PADDING_BYTES: usize = EI_NIDENT - EI_PAD;
 
-
 pub const PHOFF32_START: usize = 0x1C;
 pub const PHOFF32_END: usize = PHOFF32_START + 0x4;
 

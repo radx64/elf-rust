@@ -46,3 +46,22 @@ pub fn gray() -> & 'static str {
 pub fn default() -> & 'static str {
     try_colorize("\x1b[0m")
 } 
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn should_return_colored_ansi_sequence_when_colors_are_enabled() {
+        enable_colors();
+        let result = red();
+        assert!(result.len() > 0);
+    }
+
+    #[test]
+    fn should_not_return_colored_ansi_sequence_when_colors_are_disabled() {
+        disable_colors();
+        let result = red();
+        assert!(result.len() == 0);
+    }
+}

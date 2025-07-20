@@ -13,7 +13,7 @@ use config::Config;
 use crate::structs::{programheader::{ProgramHeader, ProgramHeaderInfo}, sectionheader::{SectionHeader, SectionHeaderInfo}};
 
 pub fn analyze(config: &Config) -> Result<(), String> {
-    let payload = match fs::read(&config.binary_name) {
+    let payload = match fs::read(config.get_inspected_binary_name()) {
         Ok(bytes) => bytes,
         Err(error) => return Err(error.to_string()),
     };
@@ -22,8 +22,11 @@ pub fn analyze(config: &Config) -> Result<(), String> {
         Ok(value) => value,
         Err(error) => return Err(format!("Failed parsing elf header due to \"{}\"", error)),
     }; 
-    elf_header.print();
-    println!("");
+
+    if config.should_display_elf_header() {
+        elf_header.print();
+        println!("");
+    }
 
     let is_32bit = elf_header.is32_bit();
     let is_little_endian = elf_header.is_little_endian();
@@ -38,8 +41,10 @@ pub fn analyze(config: &Config) -> Result<(), String> {
         Err(error) => return Err(format!("Failed parsing program header due to \"{}\"", error)),
     };
 
-    program_header.print();
-    println!("");
+    if config.should_display_program_headers() {
+        program_header.print();
+        println!("");
+    }
     
     let section_header_info = SectionHeaderInfo {
         offset: elf_header.section_header_offset(),
@@ -52,7 +57,9 @@ pub fn analyze(config: &Config) -> Result<(), String> {
         Err(error) => return Err(format!("Failed parsing section header due to \"{}\"", error)),
     };
 
-    section_header.print();
+    if config.should_display_section_headers() {
+        section_header.print();
+    }
 
     Ok(())
 }
@@ -61,17 +68,26 @@ pub fn analyze(config: &Config) -> Result<(), String> {
 mod tests {
     use super::*;
 
-    //#[test]
-    // fn test_elf_header_build() {
-    //     let payload = vec![0x7F, 0x45, 0x4C, 0x46, 0x00, 0x00, 0x00];
-    //     let header = ElfHeader::build(&payload);
-    //     assert!(header.is_ok());
-    // }
-
     #[test]
     fn test_elf_header_build_too_short() {
         let payload = vec![0x7F, 0x45, 0x4C];
         let header = ElfHeader::build(&payload);
+        assert!(header.is_err());
+    }
+
+    #[test]
+    fn test_program_header_build_too_short() {
+        let payload = vec![0x7F, 0x45, 0x4C];
+        let info = ProgramHeaderInfo {offset: structs::word::Word::Bits64(0x0), entries: 10, size: 500};
+        let header = ProgramHeader::build(&payload, &info, false, false);
+        assert!(header.is_err());
+    }
+
+    #[test]
+    fn test_section_header_build_too_short() {
+        let payload = vec![0x7F, 0x45, 0x4C];
+        let info = SectionHeaderInfo {offset: structs::word::Word::Bits64(0x0), entries: 10, size: 500, names_index: 10};
+        let header = SectionHeader::build(&payload, &info, false, false);
         assert!(header.is_err());
     }
 }
