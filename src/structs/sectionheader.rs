@@ -1,5 +1,5 @@
 use crate::structs::word::Word;
-use crate::termcolors::*;
+use crate::termcolors;
 use crate::types;
 use crate::structs::sectionheadertype::SectionHeaderType;
 use crate::bits::*;
@@ -22,26 +22,36 @@ pub struct SectionHeaderEntry {
 
 impl SectionHeaderEntry {
     pub fn print(&self){
-        println!("\t0x{:08X}\t0x{:08X}\t0x{:08X}\t0x{:08X}\t{:16}",
+        println!("\t{}0x{:08X}\t{}0x{:08X}\t{}0x{:08X}\t{}0x{:08X}\t{}{:32}",
+            termcolors::green(),
             self.sh_addr.to_u64().unwrap(),
+            termcolors::blue(),
             self.sh_offset.to_u64().unwrap(),
+            termcolors::purple(),
             self.sh_link,
-
+            termcolors::yellow(),
             self.sh_entsize.to_u64().unwrap(),
+            termcolors::white(),
             self.sh_name_str,
         );
-        println!("\t0x{:08X}\t\t\t0x{:08X}\t0x{:08X}\t{}",
+        println!("\t{}0x{:08X}\t\t\t{}0x{:08X}\t{}0x{:08X}\t{}{}",
+            termcolors::cyan(),
             self.sh_addralign.to_u64().unwrap(), 
+            termcolors::gray(),
             self.sh_info,
+            termcolors::red(),
             self.sh_size.to_u64().unwrap(),
+            termcolors::default(),
             self.sh_type);
 
         let flags = self.sh_flags.to_u64().unwrap();
 
         if flags != 0 {
-            println!("{}", sectionheaderflags::flags_to_string(self.sh_flags.to_u64().unwrap()));
+            println!("{}{}", 
+                termcolors::yellow(),
+                sectionheaderflags::flags_to_string(self.sh_flags.to_u64().unwrap()));
         } else {
-            println!("\t[No flags]");
+            println!("\t{}[No flags]", termcolors::yellow());
         }
     }
 }
@@ -153,13 +163,23 @@ impl SectionHeader {
     }
 
     pub fn print(&self){
-        println!("{}Section header segments:{}", purple(), default());
+        println!("{}Section header segments:{}", termcolors::purple(), termcolors::default());
  
-        println!("[Idx]\tLoadAddr\tImgOffset\tLink\t\tEntrySize\tName");
-        println!("\tAlignment\t\t\tInfo\t\tSize\t\tType");
-        println!("\tFlags");
+        println!("{}[Idx]\t{}LoadAddr\t{}ImgOffset\t{}Link\t\t{}EntrySize\t{}Name",
+            termcolors::red(),
+            termcolors::green(),
+            termcolors::blue(),
+            termcolors::purple(),
+            termcolors::yellow(),
+            termcolors::white());
+        println!("\t{}Alignment\t\t\t{}Info\t\t{}Size\t\t{}Type",
+            termcolors::cyan(),
+            termcolors::gray(),
+            termcolors::red(),
+            termcolors::default());
+        println!("\t{}Flags", termcolors::yellow());
         for (index, entry) in self.entries.iter().enumerate() {
-            print!("[{index:3}]");
+            print!("{}[{index:3}]", termcolors::red());
             entry.print();
             println!("");
         }

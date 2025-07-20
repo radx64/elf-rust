@@ -1,5 +1,6 @@
 use crate::bits::*;
 use crate::structs::word::Word;
+use crate::termcolors;
 use crate::termcolors::*;
 use crate::types;
 
@@ -117,9 +118,19 @@ impl ProgramHeader {
 
     pub fn print(&self) {
         println!("{}Program header segments:{}", purple(), default());
-        println!("Idx\tOffset\t\tVirtAddr\tPhysAddr\tFileSiz\t\tMemSiz\t\tFlags\tAlignment\tType");
+        println!("{}Idx\t{}Offset\t\t{}VirtAddr\t{}PhysAddr\t{}FileSiz\t\t{}MemSiz\t\t{}Flags\t{}Alignment\t{}Type{}",
+            termcolors::red(),
+            termcolors::green(),
+            termcolors::blue(),
+            termcolors::purple(),
+            termcolors::yellow(),
+            termcolors::white(),
+            termcolors::cyan(),
+            termcolors::gray(),
+            termcolors::red(),
+            termcolors::default());
         for (index, entry) in self.entries.iter().enumerate() {
-            print!("{index:3}\t");
+            print!("{}{index:3}\t{}", termcolors::red(), termcolors::default());
             entry.print();
         }
     }

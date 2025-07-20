@@ -13,12 +13,10 @@ fn try_colorize(input: & 'static str) -> & 'static str
 
 pub fn disable_colors(){
     COLORS_ENABLED.store(false, std::sync::atomic::Ordering::Relaxed);
-    println!("Disabling colors");
 }
 
 pub fn enable_colors(){
     COLORS_ENABLED.store(true, std::sync::atomic::Ordering::Relaxed);
-    println!("Enabling colors");
 }
 
 pub fn red() -> & 'static str {
@@ -43,7 +41,7 @@ pub fn white() -> & 'static str {
     try_colorize("\x1b[97m")
 } 
 pub fn gray() -> & 'static str {
-    try_colorize("\x1b[30m")
+    try_colorize("\x1b[90m")
 } 
 pub fn default() -> & 'static str {
     try_colorize("\x1b[0m")
